@@ -113,7 +113,7 @@ app.post('/cluster', function (req, res) {
         const cluster = fs.readFileSync(`${pathObj.cluster_path}`, 'utf8');
         const clusterObj = toJSON(cluster, { comment: [';', '['], delimiter: '=' });
         const options = {
-            files: "../DSTClusterConfig/cluster.ini",
+            files: pathObj.cluster_path,
             from: [
                 "autosaver_enabled = " + clusterObj.autosaver_enabled,
                 "bind_ip = " + clusterObj.bind_ip,
