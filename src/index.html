@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <title>Gloomer Editor</title>
+</head>
+
+<body>
+    <img src="gloomer.png" alt="Gloomer Logo" class="gloomer" onmouseover="this.src='gloomer_hover.png';"
+        onmouseout="this.src='gloomer.png';">
+    <div class="alert-container">
+        <div class="notify alert" role="alert">
+
+        </div>
+    </div>
+    <div class="container">
+        <div class="mt-3 mb-3">
+            <div class="tab">
+                <button class="tablinks" onclick="openTab(event, 'path')" id="defaultTab">Path Settings</button>
+                <button class="tablinks" onclick="openTab(event, 'cluster')">Cluster</button>
+                <button class="tablinks" onclick="openTab(event, 'forest')">Forest</button>
+                <button class="tablinks" onclick="openTab(event, 'cave')">Caves</button>
+                <button class="tablinks" onclick="openTab(event, 'help')">Help</button>
+            </div>
+
+            <div>
+                <div id="path" class="tabcontent">
+                    <h3 class="mt-3">Path settings</h3>
+                    <hr>
+                    <form id="path_form">
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label>Cluster Token Path</label>
+                                <input type="text" class="form-control cluster-token-path"
+                                    placeholder="cluster_token.txt">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>Cluster Path</label>
+                                <input type="text" class="form-control cluster-path" placeholder="cluster.ini">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>Forest Path</label>
+                                <input type="text" class="form-control forest-path" placeholder="leveldataoverride.lua">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>Cave Path</label>
+                                <input type="text" class="form-control cave-path" placeholder="leveldataoverride.lua">
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="col-12 text-right">
+                            <button type="button" class="btn btn-outline-secondary mb-2" onclick="httpGet('path', function(res) {
+                                path = res.data;                                
+                                updatePathFields();                
+                                $('.notify').text(`🙂 All fields have been reset to the last Apply.`).addClass('alert-warning');
+                            });">Reset to Last Apply</button>
+                            <button type="submit" class="btn btn-success mb-2">Apply Changes</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="cluster" class="tabcontent">
+                    <h3 class="mt-3">Cluster settings</h3>
+                    <hr>
+                    <form id="cluster_form">
+                        <div class="cluster_error_row">
+                            <div class="w-100 alert alert-danger" role="alert">
+                                The Cluster Path isn't setted.
+                            </div>
+                        </div>
+                        <div class="row cluster_row">
+                            <h5 class="col-12 text-primary">[GAMEPLAY]</h5>
+                            <div class="col-md-3 col-lg-2 form-group">
+                                <label>Game Mode</label>
+                                <select class="form-control game-mode">
+                                    <option>survival</option>
+                                    <option>endless</option>
+                                    <option>wilderness</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 col-lg-2 form-group">
+                                <label>Max Players</label>
+                                <input type="number" class="form-control max-players" placeholder="1~64">
+                            </div>
+                            <div class="col-md-3 col-lg-2 form-group">
+                                <label>PVP</label>
+                                <select class="form-control pvp">
+                                    <option>false</option>
+                                    <option>true</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 col-lg-2 form-group">
+                                <label>Pause When Empty</label>
+                                <select class="form-control pause">
+                                    <option>false</option>
+                                    <option>true</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 col-lg-2 form-group">
+                                <label>Vote Enabled</label>
+                                <select class="form-control vote">
+                                    <option>false</option>
+                                    <option>true</option>
+                                </select>
+                            </div>
+
+                            <h5 class="col-12 mt-4 text-primary">[NETWORK]</h5>
+                            <div class="col-md-3 col-lg-2 form-group">
+                                <label>Cluster Intention</label>
+                                <select class="form-control cluster-intention">
+                                    <option>cooperative</option>
+                                    <option>competitive</option>
+                                    <option>social</option>
+                                    <option>madness</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <label>Cluster Name</label>
+                                <input type="text" class="form-control cluster-name">
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <label>Cluster Password</label>
+                                <input type="text" class="form-control cluster-password">
+                            </div>
+                            <div class="col-md-3 col-lg-4 form-group">
+                                <label>Cluster Description</label>
+                                <input type="text" class="form-control cluster-description">
+                            </div>
+                            <div class="col-md-3 col-lg-2 form-group">
+                                <label>Auto Save Enabled</label>
+                                <select class="form-control autosaver-enabled">
+                                    <option>false</option>
+                                    <option>true</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 col-lg-2 form-group">
+                                <label>Vote Kick Enabled</label>
+                                <select class="form-control enable-vote-kick">
+                                    <option>false</option>
+                                    <option>true</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 col-lg-2 form-group">
+                                <label>Tick Rate</label>
+                                <input type="number" class="form-control tick-rate" placeholder="ex: 10|15|30|60">
+                            </div>
+                            <div class="col-md-3 col-lg-2 form-group">
+                                <label>Connection Timeout</label>
+                                <input type="number" class="form-control connection-timeout">
+                            </div>
+
+                            <h5 class="col-12 mt-4 text-primary">[MISC]</h5>
+                            <div class="col-md-3 col-lg-2 form-group">
+                                <label>Max Snapshots</label>
+                                <input type="number" class="form-control max-snapshots">
+                            </div>
+                            <div class="col-md-3 col-lg-2 form-group">
+                                <label>Console Enabled</label>
+                                <select class="form-control console-enabled">
+                                    <option>false</option>
+                                    <option>true</option>
+                                </select>
+                            </div>
+
+                            <h5 class="col-12 mt-4 text-primary">[SHARD]</h5>
+                            <div class="col-md-3 col-lg-6 form-group">
+                                <label>Cluster Key</label>
+                                <input type="text" class="form-control cluster-key">
+                            </div>
+                            <div class="col-md-3 col-lg-2 form-group">
+                                <label>Shard Enabled</label>
+                                <select class="form-control shard-enabled">
+                                    <option>false</option>
+                                    <option>true</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 col-lg-2 form-group">
+                                <label>Bind IP</label>
+                                <input type="text" class="form-control bind-ip">
+                            </div>
+                            <div class="col-md-3 col-lg-2 form-group">
+                                <label>Master IP</label>
+                                <input type="text" class="form-control master-ip">
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="col-12 text-right">
+                            <button type="button" class="btn btn-outline-secondary mb-2" onclick="httpGet('cluster', function(res) {
+                                cluster = res.data;                                
+                                updateClusterFields();                
+                                $('.notify').text(`🙂 All fields have been reset to the last Apply.`).addClass('alert-warning');
+                            });">Reset to Last Apply</button>
+                            <button type="submit" class="btn btn-success mb-2">Apply Changes</button>
+                        </div>
+
+                    </form>
+                </div>
+
+                <div id="cave" class="tabcontent">
+                    <h3 class="mt-3">Caves settings</h3>
+                    <hr>
+                    <form class="row cave_row">
+                        <div class="col-md-3 form-group">
+                            <label>Cluster Name</label>
+                            <input type="text" class="form-control cluster-name">
+                        </div>
+                    </form>
+                </div>
+
+                <div id="help" class="tabcontent">
+                    <h3 class="mt-3">Help</h3>
+                    <hr>
+                    <h4>How to execute with Docker</h4>
+                    <p class="mb-0 mt-1">1 - Run compose in the project folder</p>
+                    <p class="mb-0 mt-0"><code>docker-compose up -d</code></p>
+                    <p class="mb-0 mt-1">2 - Open on your browser</p>
+                    <p class="mb-0 mt-0"><code>http://localhost:8080/</code> if is running in your PC</p>
+                    <p class="mt-0"><code>http://0.0.0.0:8080/</code> if is running in a host (change the 0 for the host ip)</p>
+                    <hr>
+                    <h4>How to execute with NodeJS</h4>
+                    <p class="mb-0 mt-1">1 - Install NodeJS</p>
+                    <a href="https://nodejs.org/" target="_blank"><code>https://nodejs.org/</code></a>
+                    <p class="mb-0 mt-1">2 - Run npm install in the project folder</p>
+                    <p class="mb-0 mt-0"><code>npm install</code></p>
+                    <p class="mb-0 mt-1">3 - Run npm start in the project folder</p>
+                    <p class="mb-0 mt-0"><code>npm start</code></p>
+                    <p class="mb-0 mt-1">4 - Open on your browser</p>
+                    <p class="mb-0 mt-0"><code>http://localhost:8080/</code> if is running in your PC</p>
+                    <p class="mb-0 mt-0"><code>http://0.0.0.0:8080/</code> if is running in a host (change the 0 for the host ip)</p>
+                </div>
+
+                <div id="forest" class="tabcontent">
+                    <h3 class="mt-3">Forest settings</h3>
+                    <hr>
+                    <form class="row forest_row">
+                        <div class="col-md-6 form-group">
+                            <label>Description</label>
+                            <input type="text" class="form-control forest-description">
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label>ID</label>
+                            <input type="text" class="form-control forest-id">
+                        </div>
+                        <hr>
+                        <div class="col-12 text-right">
+                            <button type="button" class="btn btn-outline-secondary mb-2" onclick="httpGet('forest', function(res) {
+                                cluster = res.data;                                
+                                updateForestFields();                
+                                $('.notify').text(`🙂 All fields have been reset to the last Apply.`).addClass('alert-warning');
+                            });">Reset to Last Apply</button>
+                            <button type="submit" class="btn btn-success mb-2">Apply Changes</button>
+                        </div>
+                    </form>
+                </div>
+                
+            </div>
+        </div>
+        <div class="text-center mt-2">
+            <a href="https://instagram.com/rafarvns" target="__blank">Github</a>
+        </div>
+    </div>
+
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+
+
+    <script>
+
+        // INITIALIZE
+        document.getElementById("defaultTab").click();
+
+        var ipAddress = 'http://' + location.hostname + ':3000/';
+        var path = undefined;
+        var cluster = undefined;
+        var forest = undefined;
+
+        getPath();
+        getCluster();
+        getForest();
+
+        function getPath() {
+            httpGet('path', function (res) {
+                path = res.data;
+                updatePathFields();
+            });
+        }
+
+        function getCluster() {
+            httpGet('cluster', function (res) {
+                cluster = res.data;
+                updateClusterFields();
+            });
+        }
+
+        function getForest() {
+            httpGet('forest', function (res) {
+                forest = res.data;
+                console.log(forest);
+                updateForestFields();
+            });
+        }
+
+        // GENERAL METHODS
+        function updatePathFields() {
+            if (path !== undefined) {
+                $('.cluster-token-path').val(path.cluster_token_path);
+                $('.cluster-path').val(path.cluster_path);
+                $('.forest-path').val(path.forest_path);
+                $('.cave-path').val(path.cave_path);
+            }
+        }
+
+        function updateClusterFields() {
+            if (cluster !== undefined) {
+                $('.cluster_error_row').css('display', 'none');
+                $('.cluster_row').css('display', 'flex');
+                $('.game-mode').val(cluster.game_mode);
+                $('.max-players').val(cluster.max_players);
+                $('.pvp').val(cluster.pvp);
+                $('.pause').val(cluster.pause_when_empty);
+                $('.vote').val(cluster.vote_enabled);
+                $('.cluster-intention').val(cluster.cluster_intention);
+                $('.cluster-name').val(cluster.cluster_name);
+                $('.cluster-password').val(cluster.cluster_password);
+                $('.cluster-description').val(cluster.cluster_description);
+                $('.autosaver-enabled').val(cluster.autosaver_enabled);
+                $('.enable-vote-kick').val(cluster.enable_vote_kick);
+                $('.tick-rate').val(cluster.tick_rate);
+                $('.connection-timeout').val(cluster.connection_timeout);
+                $('.max-snapshots').val(cluster.max_snapshots);
+                $('.console-enabled').val(cluster.console_enabled);
+                $('.cluster-key').val(cluster.cluster_key);
+                $('.shard-enabled').val(cluster.shard_enabled);
+                $('.bind-ip').val(cluster.bind_ip);
+                $('.master-ip').val(cluster.master_ip);
+            } else {
+                $('.cluster_error_row').css('display', 'flex');
+                $('.cluster_row').css('display', 'none');
+            }
+        }
+
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            console.log(tabcontent);
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        // FORMS 
+        window.addEventListener("load", function () {
+            document.getElementById('path_form').addEventListener("submit", function (e) {
+                e.preventDefault();
+                const pathJson = {
+                    cluster_token_path: e.target[0].value,
+                    cluster_path: e.target[1].value,
+                    forest_path: e.target[2].value,
+                    cave_path: e.target[3].value,
+                }
+                httpPost('path', pathJson, function (res) {
+                    if (res.error === 'none') {
+                        httpGet('path', function (res) {
+                            path = res.data;
+                            updatePathFields();
+                            getCluster();
+                        });
+                        $('.notify').text(res.message).addClass('alert-success');
+                    } else {
+                        $('.notify').text(res.message).addClass('alert-danger');
+                    }
+                });
+            });
+
+            document.getElementById('cluster_form').addEventListener("submit", function (e) {
+                e.preventDefault();
+                const clusterJson = {
+                    game_mode: e.target[0].value,
+                    max_players: e.target[1].value,
+                    pvp: e.target[2].value,
+                    pause_when_empty: e.target[3].value,
+                    vote_enabled: e.target[4].value,
+                    cluster_intention: e.target[5].value,
+                    cluster_name: e.target[6].value,
+                    cluster_password: e.target[7].value,
+                    cluster_description: e.target[8].value,
+                    autosaver_enabled: e.target[9].value,
+                    enable_vote_kick: e.target[10].value,
+                    tick_rate: e.target[11].value,
+                    connection_timeout: e.target[12].value,
+                    max_snapshots: e.target[13].value,
+                    console_enabled: e.target[14].value,
+                    cluster_key: e.target[15].value,
+                    shard_enabled: e.target[16].value,
+                    bind_ip: e.target[17].value,
+                    master_ip: e.target[18].value,
+                }
+                httpPost('cluster', clusterJson, function (res) {
+                    if (res.error === 'none') {
+
+                        httpGet('cluster', function (res) {
+                            cluster = res.data;
+                            updateClusterFields();
+                        });
+
+                        $('.notify').text(res.message).addClass('alert-success');
+                    } else {
+                        $('.notify').text(res.message).addClass('alert-danger');
+                    }
+                });
+            });
+        });
+
+        // HTTP METHODS
+        function httpGet(endpoint, callback, errMessage) {
+            $.ajax({
+                url: ipAddress + endpoint,
+                type: 'GET',
+                dataType: 'json',
+                success: callback,
+                error: function (res) {
+                    console.error(res);
+                }
+            });
+        }
+
+        function httpPost(endpoint, body, callback, errMessage) {
+            $.ajax({
+                type: "POST",
+                contentType: "application/json",
+                url: ipAddress + endpoint,
+                data: JSON.stringify(body),
+                dataType: 'json',
+                success: callback,
+                error: function (res) {
+                    console.error(res);
+                }
+            });
+        }
+
+    </script>
+</body>
+
+</html>
