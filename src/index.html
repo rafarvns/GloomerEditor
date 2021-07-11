@@ -240,13 +240,26 @@
                     <h3 class="mt-3">Forest settings</h3>
                     <hr>
                     <form class="row forest_row">
-                        <div class="col-md-6 form-group">
-                            <label>Description</label>
-                            <input type="text" class="form-control forest-description">
+                        <div class="forest_error_row">
+                            <div class="w-100 alert alert-danger" role="alert">
+                                The Forest Path isn't setted.
+                            </div>
                         </div>
-                        <div class="col-md-6 form-group">
-                            <label>ID</label>
-                            <input type="text" class="form-control forest-id">
+                        <h5 class="col-12 text-primary">[GLOBAL]</h5>
+                        <div class="col-md-3 col-lg-2 form-group">
+                            <label>Events</label>
+                            <select class="form-control specialevent">
+                                <option>none</option>
+                                <option>default</option>
+                                <option>midsummer_cawnival</option>
+                                <option>hallowed_nights</option>
+                                <option>winters_feast</option>
+                                <option>year_of_the_gobbler</option>
+                                <option>year_of_the_varg</option>
+                                <option>year_of_the_pig_king</option>
+                                <option>year_of_the_carrat</option>
+                                <option>year_of_the_beefalo</option>
+                            </select>
                         </div>
                         <hr>
                         <div class="col-12 text-right">
@@ -308,7 +321,6 @@
         function getForest() {
             httpGet('forest', function (res) {
                 forest = res.data;
-                console.log(forest);
                 updateForestFields();
             });
         }
@@ -349,6 +361,18 @@
             } else {
                 $('.cluster_error_row').css('display', 'flex');
                 $('.cluster_row').css('display', 'none');
+            }
+        }
+
+        function updateForestFields() {
+            if (forest !== undefined) {
+                $('.forest_error_row').css('display', 'none');
+                $('.forest_row').css('display', 'flex');
+                $('.specialevent').val(forest.overrides.specialevent);
+
+            } else {
+                $('.forest_error_row').css('display', 'flex');
+                $('.forest_row').css('display', 'none');
             }
         }
 
@@ -422,6 +446,24 @@
                             updateClusterFields();
                         });
 
+                        $('.notify').text(res.message).addClass('alert-success');
+                    } else {
+                        $('.notify').text(res.message).addClass('alert-danger');
+                    }
+                });
+            });
+
+            document.getElementById('forest_form').addEventListener("submit", function (e) {
+                e.preventDefault();
+                const forestJson = {
+                    specialevent: e.target[0].value,
+                }
+                httpPost('forest', forestJson, function (res) {
+                    if (res.error === 'none') {
+                        httpGet('forest', function (res) {
+                            forest = res.data;
+                            updateForestFields();
+                        });
                         $('.notify').text(res.message).addClass('alert-success');
                     } else {
                         $('.notify').text(res.message).addClass('alert-danger');

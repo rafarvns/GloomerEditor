@@ -189,11 +189,11 @@ app.get('/forest', function (req, res) {
         const path = fs.readFileSync('./path.ini', 'utf8');
         const pathObj = toJSON(path, { comment: [';', '['], delimiter: '=' });
 
-        const world = fs.readFileSync(`${pathObj.forest_path}`, 'utf8');
-        const worldObj = parse(world);
+        const forest = fs.readFileSync(`${pathObj.forest_path}`, 'utf8');
+        const forestObj = parse(forest);
         res.send({
             message: '😁 The data from Master/leveldataoverride.lua file has been getted.',
-            data: worldObj,
+            data: forestObj,
             status: 200,
             error: 'none'
         });
